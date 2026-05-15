@@ -17,10 +17,13 @@ An external service that wlog pulls Activity from on the User's behalf. Credenti
 **V1 integrations**: GitHub (commits, PRs) and Linear (issues, status transitions). Jira, GitLab, and others are explicitly out of scope for v1.
 
 ### Connection
-A User's authenticated link to a specific Integration, established via OAuth. A User has one Connection per Integration. The Connection stores the OAuth token server-side and the User's identity within that Integration (e.g. their GitHub username, Jira account ID). A Pull for a User only runs against their active Connections.
+A User's authenticated link to a specific Integration, established via OAuth. A User has one Connection per Integration. The Connection stores the OAuth token server-side, the User's identity within that Integration (e.g. their GitHub username, Linear user ID), and the User's Scope for that Integration. A Pull for a User only runs against their active Connections, restricted to each Connection's Scope.
+
+### Scope
+The subset of repos (GitHub) or projects (Linear) a User has opted in to track for a given Connection. Pulls fetch Activity only for items in the Scope. The default on first connect is **nothing selected** — Users must explicitly choose what to track. This avoids surprise consumption of the User's personal API rate limit, and reflects that most engineers have many repos/projects but only a few are relevant to their daily summary. Scope is managed from the dashboard (all Users) and from the CLI via `wlog repos` and `wlog projects` (Pro only). Both surfaces write to the same underlying selection per Connection.
 
 ### Pull
-The server-side operation that fetches raw Activity from a User's connected Integrations. A Pull is either Scheduled or Manual.
+The server-side operation that fetches raw Activity from a User's connected Integrations, restricted to each Connection's Scope. A Pull is either Scheduled or Manual.
 
 - **Scheduled Pull**: Runs daily at the User's configured time (e.g. 8:00am). Runs server-side regardless of whether the User is online. Users with no active Connections or inactive for N days have their Scheduled Pulls paused.
 - **Manual Pull**: Triggered explicitly by the User from the dashboard or CLI at any time to fetch fresh Activity on demand.
@@ -30,7 +33,7 @@ The time window of a Pull always spans from the completion timestamp of the last
 Every successful Pull automatically triggers generation of a Standup and EOD Digest. Brag Doc generation is on-demand only.
 
 ### Activity
-Raw data fetched from an Integration during a Pull. Examples: a commit, a PR open/merge/close event, a Jira ticket status change, a Linear issue update.
+Raw data fetched from an Integration during a Pull. Examples: a commit, a PR open/merge/close event, a Linear issue status transition, a Linear issue assignment. (Jira is explicitly out of scope for v1 — see ADR 0002.)
 
 ### ActivitySummary
 A structured, deduplicated, and filtered representation of a User's raw Activity for a given time window, produced before LLM generation. The ActivitySummary is the direct input to the LLM when generating a Digest.

@@ -1,0 +1,23 @@
+{
+	"name": "@wlog/auth",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@wlog/env": "workspace:*",
+		"better-auth": "catalog:",
+		"dotenv": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@wlog/config": "workspace:*",
+		"typescript": "catalog:"
+	}
+}

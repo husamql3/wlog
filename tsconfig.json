@@ -1,0 +1,3 @@
+{
+	"extends": "@wlog/config/tsconfig.base.json"
+}
