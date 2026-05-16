@@ -6,6 +6,9 @@
 	"exports": {
 		".": "./src/index.ts"
 	},
+	"scripts": {
+		"test": "bun test"
+	},
 	"dependencies": {
 		"@t3-oss/env-core": "^0.13.1",
 		"zod": "catalog:"

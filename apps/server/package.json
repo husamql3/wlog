@@ -8,7 +8,7 @@
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/dev.ts --outfile server",
 		"dev": "bun --env-file=../../packages/env/.env --hot src/dev.ts",
 		"start": "bun --env-file=../../packages/env/.env dist/dev.mjs",
-		"test": "bun --env-file=../../packages/env/.env test",
+		"test": "bun test",
 		"trigger:dev": "npx trigger.dev@latest dev",
 		"trigger:deploy": "npx trigger.dev@latest deploy"
 	},

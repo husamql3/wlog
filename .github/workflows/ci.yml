@@ -13,9 +13,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-      # CI uses .env.example placeholders to satisfy schema validation.
+      # CI uses placeholders to satisfy env schema validation.
       # Real secrets live in Vercel; CI only runs typecheck / test / build.
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci?sslmode=disable
       DIRECT_URL: postgresql://ci:ci@localhost:5432/ci?sslmode=disable

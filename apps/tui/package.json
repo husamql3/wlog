@@ -5,7 +5,8 @@
 	"module": "src/index.tsx",
 	"scripts": {
 		"dev": "bun run --watch src/index.ts",
-		"check-types": "tsc --noEmit"
+		"check-types": "tsc --noEmit",
+		"test": "bun test"
 	},
 	"dependencies": {
 		"@opentui/core": "^0.2.9"
