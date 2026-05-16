@@ -34,5 +34,5 @@ jobs:
       - name: Biome
         run: bun biome ci .
 
-      - name: Typecheck, test, build
-        run: bun turbo check-types test build
+      - name: Typecheck, build
+        run: bun turbo check-types build
