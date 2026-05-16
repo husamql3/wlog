@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      # CI uses .env.example placeholders to satisfy schema validation.
+      # Real secrets live in Vercel; CI only runs typecheck / test / build.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci?sslmode=disable
+      DIRECT_URL: postgresql://ci:ci@localhost:5432/ci?sslmode=disable
+      BETTER_AUTH_SECRET: ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci
+      BETTER_AUTH_URL: http://localhost:3000
+      CORS_ORIGIN: http://localhost:3001
+      VITE_SERVER_URL: http://localhost:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.7
+
+      - run: bun install --frozen-lockfile
+
+      - name: Biome
+        run: bun biome ci .
+
+      - name: Typecheck, test, build
+        run: bun turbo check-types test build

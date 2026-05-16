@@ -1,4 +1,5 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { env } from "@wlog/env";
 import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
@@ -9,7 +10,7 @@ const router = createRouter({
 	defaultPreload: "intent",
 	scrollRestoration: true,
 	defaultPendingComponent: () => <Loader />,
-	context: {},
+	context: { env },
 });
 
 declare module "@tanstack/react-router" {

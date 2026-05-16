@@ -1,25 +1,29 @@
 {
 	"name": "server",
 	"type": "module",
-	"main": "src/index.ts",
+	"main": "src/app.ts",
 	"scripts": {
 		"build": "tsdown",
 		"check-types": "tsc -b",
-		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-		"dev": "bun run --hot src/index.ts",
-		"start": "bun run dist/index.mjs"
+		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/dev.ts --outfile server",
+		"dev": "bun --env-file=../../packages/env/.env --hot src/dev.ts",
+		"start": "bun --env-file=../../packages/env/.env dist/dev.mjs",
+		"test": "bun --env-file=../../packages/env/.env test",
+		"trigger:dev": "npx trigger.dev@latest dev",
+		"trigger:deploy": "npx trigger.dev@latest deploy"
 	},
 	"dependencies": {
 		"@elysiajs/cors": "^1.4.1",
 		"@sinclair/typebox": "^0.34.49",
+		"@trigger.dev/sdk": "4.4.6",
 		"@wlog/auth": "workspace:*",
 		"@wlog/env": "workspace:*",
 		"better-auth": "catalog:",
-		"dotenv": "catalog:",
 		"elysia": "^1.4.28",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
+		"@trigger.dev/build": "4.4.6",
 		"@types/bun": "catalog:",
 		"@wlog/config": "workspace:*",
 		"tsdown": "^0.21.9",

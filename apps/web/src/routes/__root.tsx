@@ -10,7 +10,7 @@ import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import "../index.css";
-import type { env } from "@wlog/env/web";
+import type { env } from "@wlog/env";
 
 export type RouterAppContext = {
 	env: typeof env;
