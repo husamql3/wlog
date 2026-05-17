@@ -12,3 +12,5 @@ export const app = new Elysia()
 		}),
 	)
 	.get("/", () => "OK");
+
+export default app;

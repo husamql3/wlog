@@ -4,11 +4,13 @@
 	"main": "src/app.ts",
 	"scripts": {
 		"build": "tsdown",
-		"check-types": "tsc -b",
+		"check-types": "tsc --noEmit",
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/dev.ts --outfile server",
+		"deploy": "vercel deploy ../.. --local-config ../../apps/server/vercel.json --yes",
+		"deploy:prod": "bun run deploy --prod",
 		"dev": "bun --env-file=../../packages/env/.env --hot src/dev.ts",
 		"start": "bun --env-file=../../packages/env/.env dist/dev.mjs",
-		"test": "bun test",
+		"test": "bun test src",
 		"trigger:dev": "npx trigger.dev@latest dev",
 		"trigger:deploy": "npx trigger.dev@latest deploy"
 	},
