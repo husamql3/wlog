@@ -1,0 +1,30 @@
+{
+	"name": "@wlog/db",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit",
+		"db:generate": "bun --env-file=../env/.env prisma generate",
+		"db:migrate:dev": "bun --env-file=../env/.env prisma migrate dev",
+		"db:migrate:deploy": "bun --env-file=../env/.env prisma migrate deploy",
+		"db:push": "bun --env-file=../env/.env prisma db push",
+		"db:studio": "bun --env-file=../env/.env prisma studio",
+		"db:validate": "bun --env-file=../env/.env prisma validate",
+		"test": "bun --env-file=../env/.env test"
+	},
+	"dependencies": {
+		"@prisma/adapter-neon": "latest",
+		"@prisma/client": "latest",
+		"@wlog/env": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/bun": "catalog:",
+		"@wlog/config": "workspace:*",
+		"prisma": "latest",
+		"typescript": "catalog:"
+	}
+}

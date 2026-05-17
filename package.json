@@ -25,11 +25,21 @@
 		"dev:web": "turbo -F web dev",
 		"dev:tui": "turbo -F tui dev",
 		"dev:server": "turbo -F server dev",
+		"db:generate": "bun --filter @wlog/db db:generate",
+		"db:migrate:dev": "bun --filter @wlog/db db:migrate:dev",
+		"db:migrate:deploy": "bun --filter @wlog/db db:migrate:deploy",
+		"db:push": "bun --filter @wlog/db db:push",
+		"db:studio": "bun --filter @wlog/db db:studio",
+		"db:validate": "bun --filter @wlog/db db:validate",
+		"vercel:dev": "bun --env-file=packages/env/.env run vercel dev --yes",
+		"deploy": "vercel deploy --local-config apps/server/vercel.json --yes",
+		"deploy:prod": "bun run deploy --prod",
 		"check": "biome check --write ."
 	},
 	"dependencies": {
 		"@wlog/env": "workspace:*",
 		"dotenv": "^17.4.2",
+		"elysia": "^1.4.28",
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {

@@ -7,7 +7,7 @@
 		".": "./src/index.ts"
 	},
 	"scripts": {
-		"test": "bun test"
+		"test": "bun --env-file=./.env test"
 	},
 	"dependencies": {
 		"@t3-oss/env-core": "^0.13.1",

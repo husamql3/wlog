@@ -11,6 +11,9 @@
 			"**",
 			"!**/.next",
 			"!**/dist",
+			"!**/.claude",
+			"!**/.agents",
+			"!**/.cursor",
 			"!**/.turbo",
 			"!**/.nx",
 			"!**/dev-dist",
@@ -26,7 +29,8 @@
 			"!**/.svelte-kit",
 			"!**/wrangler.jsonc",
 			"!**/.source",
-			"!**/convex/_generated"
+			"!**/convex/_generated",
+			"!skills-lock.json"
 		]
 	},
 	"formatter": {

@@ -36,3 +36,6 @@ jobs:
 
       - name: Typecheck, build
         run: bun turbo check-types build
+
+      - name: Test
+        run: bun turbo test

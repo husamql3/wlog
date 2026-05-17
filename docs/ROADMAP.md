@@ -13,15 +13,18 @@ A phased, vertical-slice plan for building wlog. Free-tier MVP ships first; Pro 
 ## Phase 0 — Foundation
 **Goal:** Repo scaffolded, CI green, a "hello world" Elysia route deployed on Vercel.
 
-- [ ] Init Bun + Turborepo monorepo at repo root
-- [ ] Create packages: `db` (Prisma + Trigger.dev tasks), `server` (Elysia), `types`, `web` (placeholder), `cli` (placeholder)
-- [ ] Strict TypeScript config; path aliases across packages
-- [ ] Biome for lint + format (one tool, no ESLint/Prettier split)
-- [ ] Bun test runner configured per package
-- [ ] GitHub Actions CI: typecheck + test on PR
-- [ ] Neon project created; pooled + direct connection strings in `.env`
-- [ ] Vercel project linked to repo; Elysia "hello world" deployed
-- [ ] `.env.example` checked in
+- [x] Init Bun + Turborepo monorepo at repo root
+- [x] Create current app/package scaffold: `apps/server` (Elysia), `apps/web`, `apps/tui`, `packages/auth`, `packages/config`, `packages/env`, `packages/ui`
+- [x] Add Phase 1 data package: `db` (Prisma + Trigger.dev tasks)
+- [x] Decide package direction: use `apps/tui` as the CLI package; skip `types` for now and add a future shared package only when shared domain types exist
+- [x] Strict TypeScript config shared through `@wlog/config`
+- [x] Biome for lint + format (one tool, no ESLint/Prettier split)
+- [x] Bun test runner configured per implemented package
+- [x] GitHub Actions CI: Biome + typecheck + build + test on PR
+- [x] Neon project created; pooled + direct connection strings in `.env`
+- [x] Vercel project linked to repo
+- [ ] Elysia "hello world" deployed on Vercel
+- [x] `.env.example` checked in at `packages/env/.env.example`
 - [ ] Decide LLM provider (default: Anthropic) — write ADR 0009 before Phase 1
 - [ ] Confirm Bun runtime on Vercel works for Elysia (or set Node-compat fallback)
 
