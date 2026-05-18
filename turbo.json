@@ -4,6 +4,14 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
+			"env": [
+				"BETTER_AUTH_SECRET",
+				"BETTER_AUTH_URL",
+				"CORS_ORIGIN",
+				"DATABASE_URL",
+				"DIRECT_URL",
+				"VITE_SERVER_URL"
+			],
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
 			"outputs": ["dist/**"]
 		},

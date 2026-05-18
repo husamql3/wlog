@@ -5,3 +5,218 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum Provider {
+  GITHUB
+  LINEAR
+}
+
+enum PullStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum ActivityType {
+  COMMIT
+  PR_OPENED
+  PR_MERGED
+  PR_CLOSED
+  PR_REVIEW
+}
+
+enum DigestType {
+  STANDUP
+  EOD
+  BRAG_DOC
+}
+
+enum DigestState {
+  GENERATED
+  EDITED
+  REGENERATED
+}
+
+// ─── Better Auth ──────────────────────────────────────────────────────────────
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  plan Plan @default(FREE)
+
+  sessions          Session[]
+  accounts          Account[]
+  connections       Connection[]
+  pulls             Pull[]
+  activitySummaries ActivitySummary[]
+  digests           Digest[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique @db.Text
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?   @db.Text
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String    @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+// ─── Integration ──────────────────────────────────────────────────────────────
+
+model Connection {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider     Provider
+  accessToken  String    @db.Text
+  refreshToken String?   @db.Text
+  expiresAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  scopes     ConnectionScope[]
+  pulls      Pull[]
+  activities Activity[]
+
+  @@unique([userId, provider])
+  @@map("connection")
+}
+
+model ConnectionScope {
+  id           String     @id @default(cuid())
+  connectionId String
+  connection   Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  externalId   String
+  repoFullName String
+  createdAt    DateTime   @default(now())
+
+  @@unique([connectionId, externalId])
+  @@map("connection_scope")
+}
+
+// ─── Pull pipeline ────────────────────────────────────────────────────────────
+
+model Pull {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  connectionId String
+  connection   Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  status       PullStatus @default(PENDING)
+  startedAt    DateTime?
+  completedAt  DateTime?
+  errorMessage String?    @db.Text
+  createdAt    DateTime   @default(now())
+
+  activities        Activity[]
+  activitySummaries ActivitySummary[]
+  digests           Digest[]
+
+  @@map("pull")
+}
+
+model Activity {
+  id           String       @id @default(cuid())
+  pullId       String
+  pull         Pull         @relation(fields: [pullId], references: [id], onDelete: Cascade)
+  connectionId String
+  connection   Connection   @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  type         ActivityType
+  externalId   String
+  repoId       String
+  repoFullName String
+  title        String
+  occurredAt   DateTime
+  metadata     Json
+  createdAt    DateTime     @default(now())
+
+  @@unique([connectionId, externalId, type])
+  @@index([connectionId, occurredAt])
+  @@map("activity")
+}
+
+model ActivitySummary {
+  id        String   @id @default(cuid())
+  pullId    String   @unique
+  pull      Pull     @relation(fields: [pullId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  summary   Json
+  createdAt DateTime @default(now())
+
+  digests Digest[]
+
+  @@index([userId, date])
+  @@map("activity_summary")
+}
+
+model Digest {
+  id                String          @id @default(cuid())
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pullId            String
+  pull              Pull            @relation(fields: [pullId], references: [id], onDelete: Cascade)
+  activitySummaryId String
+  activitySummary   ActivitySummary @relation(fields: [activitySummaryId], references: [id], onDelete: Cascade)
+  type              DigestType
+  state             DigestState     @default(GENERATED)
+  content           String          @db.Text
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@unique([pullId, type])
+  @@index([userId, type, createdAt])
+  @@map("digest")
+}

@@ -13,6 +13,9 @@
 		"test": "bun --env-file=../env/.env test"
 	},
 	"dependencies": {
+		"@polar-sh/better-auth": "^1.8.4",
+		"@polar-sh/sdk": "^0.47.1",
+		"@wlog/db": "workspace:*",
 		"@wlog/env": "workspace:*",
 		"better-auth": "catalog:",
 		"dotenv": "catalog:",

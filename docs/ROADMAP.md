@@ -23,28 +23,28 @@ A phased, vertical-slice plan for building wlog. Free-tier MVP ships first; Pro 
 - [x] GitHub Actions CI: Biome + typecheck + build + test on PR
 - [x] Neon project created; pooled + direct connection strings in `.env`
 - [x] Vercel project linked to repo
-- [ ] Elysia "hello world" deployed on Vercel
+- [x] Elysia "hello world" deployed on Vercel
 - [x] `.env.example` checked in at `packages/env/.env.example`
-- [ ] Decide LLM provider (default: Anthropic) — write ADR 0009 before Phase 1
-- [ ] Confirm Bun runtime on Vercel works for Elysia (or set Node-compat fallback)
+- [x] Decide LLM provider (Google Gemini 2.5-flash via Vercel AI SDK) — ADR 0009
 
 ## Phase 1 — Vertical slice: GitHub → EOD Digest
 **Goal:** End-to-end happy path with no web UI. A user signs up via API, connects GitHub, picks one repo, triggers a manual pull, reads back an EOD Digest. Verified by `curl` / a small test harness.
 
-- [ ] Prisma schema: `User`, `Plan` enum (default `FREE`), `Connection`, `ConnectionScope`, `Activity`, `ActivitySummary`, `Digest`, `DigestType` enum
-- [ ] First Prisma migration; dev seed script
-- [ ] Better Auth wired into Elysia: email/password signup + login + session middleware
-- [ ] Eden Treaty client exported from `packages/server` for downstream packages
-- [ ] GitHub OAuth flow: redirect, callback, token exchange, store in `Connection`
-- [ ] `GET /integrations/github/repos` — list repos visible to user's GitHub token
-- [ ] `POST /integrations/github/scope` — save selected repo IDs to `ConnectionScope`
-- [ ] Trigger.dev project set up; `manual-pull` task scaffolded
-- [ ] `manual-pull` fetches GitHub Activity for the Connection's Scope only
-- [ ] ActivitySummary builder: filter to kept signals per `CONTEXT.md`, dedup, structure
-- [ ] LLM call: generate Standup + EOD from ActivitySummary
-- [ ] Persist Digests with reference to source ActivitySummary (needed for regeneration later)
-- [ ] `POST /pulls/manual` API → triggers `manual-pull`
-- [ ] `GET /digests?date=...&type=eod` API
+- [x] Prisma schema: `User`, `Plan` enum (default `FREE`), `Connection`, `ConnectionScope`, `Pull`, `Activity`, `ActivitySummary`, `Digest`, `DigestType` enum
+- [x] First Prisma migration (`20260517183036_init`)
+- [x] Dev seed script (`packages/db/src/seed.ts`, run with `bun db:seed`)
+- [x] Better Auth wired into Elysia: Google OAuth + magic link + Polar init + session middleware
+- [x] Eden Treaty client exported from `apps/server` for downstream packages (`App` type + `@elysiajs/eden`)
+- [x] GitHub OAuth flow: redirect, callback, token exchange, store in `Connection`
+- [x] `GET /integrations/github/repos` — list repos visible to user's GitHub token
+- [x] `POST /integrations/github/scope` — save selected repo IDs to `ConnectionScope`
+- [x] Trigger.dev project set up; `manual-pull` task scaffolded
+- [x] `manual-pull` fetches GitHub Activity for the Connection's Scope only
+- [x] ActivitySummary builder: filter to kept signals per `CONTEXT.md`, dedup, structure
+- [x] LLM call: generate Standup + EOD from ActivitySummary (Gemini 2.5-flash via AI SDK)
+- [x] Persist Digests with reference to source ActivitySummary (needed for regeneration later)
+- [x] `POST /pulls/manual` API → triggers `manual-pull`
+- [x] `GET /digests?date=...&type=eod` API
 - [ ] Manual e2e: signup → connect → scope → pull → digest passes
 
 ## Phase 2 — Free-tier web dashboard
@@ -148,8 +148,8 @@ A phased, vertical-slice plan for building wlog. Free-tier MVP ships first; Pro 
 These surfaced during planning and need ADRs (or amendments) before the phase they gate:
 
 - **ADR 0007 — Stack revision.** Elysia + Vercel deploy + Eden Treaty for client typing. Supersedes parts of ADR 0004 (drops separate API server, drops tRPC, defers web framework). Needed before Phase 0 work begins.
-- **ADR 0008 — Connection Scope.** Per-Connection repo/project selection with opt-in-nothing default. Needed before Phase 1 schema work.
-- **ADR 0009 — LLM provider.** Pin provider + model + fallback strategy. Needed before Phase 1 LLM call.
+- ~~**ADR 0008 — Connection Scope.**~~ Written and accepted.
+- ~~**ADR 0009 — LLM provider.**~~ Written and accepted (Google Gemini 2.5-flash, Vercel AI SDK).
 - **ADR 0003 amendment.** Add `wlog repos` and `wlog projects` commands to the CLI surface. Needed before Phase 7.
 - **Web framework pick** (TanStack Start vs React Router) — decide at start of Phase 2; ADR optional.
 - **Email provider** (Resend vs Postmark vs Loops) — decide at start of Phase 3.

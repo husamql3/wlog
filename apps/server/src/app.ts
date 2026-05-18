@@ -1,6 +1,10 @@
 import { cors } from "@elysiajs/cors";
+import { auth } from "@wlog/auth";
 import { env } from "@wlog/env";
 import { Elysia } from "elysia";
+import { digestRoutes } from "./routes/digests";
+import { githubRoutes } from "./routes/integrations/github";
+import { pullRoutes } from "./routes/pulls";
 
 export const app = new Elysia()
 	.use(
@@ -11,6 +15,12 @@ export const app = new Elysia()
 			credentials: true,
 		}),
 	)
-	.get("/", () => "OK");
+	.mount(auth.handler)
+	.use(githubRoutes)
+	.use(pullRoutes)
+	.use(digestRoutes)
+	.get("/api", () => "OK");
 
 export default app;
+
+export type App = typeof app;

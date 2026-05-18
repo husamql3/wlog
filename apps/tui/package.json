@@ -1,5 +1,5 @@
 {
-	"name": "tui",
+	"name": "@wlog/tui",
 	"private": true,
 	"type": "module",
 	"module": "src/index.tsx",

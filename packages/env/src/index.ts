@@ -6,14 +6,36 @@ const isBrowser =
 
 export const env = createEnv({
 	server: {
-		BETTER_AUTH_SECRET: z.string().min(32),
-		BETTER_AUTH_URL: z.url(),
-		CORS_ORIGIN: z.url(),
-		DATABASE_URL: z.url(),
-		DIRECT_URL: z.url(),
 		NODE_ENV: z
 			.enum(["development", "production", "test"])
 			.default("development"),
+
+		// Better Auth
+		BETTER_AUTH_SECRET: z.string().min(32),
+		BETTER_AUTH_URL: z.url(),
+
+		// Database
+		DATABASE_URL: z.url(),
+		DIRECT_URL: z.url(),
+
+		// CORS
+		CORS_ORIGIN: z.url(),
+
+		// Polar
+		POLAR_ACCESS_TOKEN: z.string(),
+		POLAR_SUCCESS_URL: z.url(),
+
+		// OAuth
+		GOOGLE_CLIENT_ID: z.string(),
+		GOOGLE_CLIENT_SECRET: z.string(),
+		GITHUB_CLIENT_ID: z.string(),
+		GITHUB_CLIENT_SECRET: z.string(),
+
+		// Gemini
+		GEMINI_API_KEY: z.string(),
+
+		// Trigger.dev
+		TRIGGER_SECRET_KEY: z.string(),
 	},
 	clientPrefix: "VITE_",
 	client: {

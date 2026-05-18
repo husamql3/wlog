@@ -14,6 +14,7 @@
 		"db:push": "bun --env-file=../env/.env prisma db push",
 		"db:studio": "bun --env-file=../env/.env prisma studio",
 		"db:validate": "bun --env-file=../env/.env prisma validate",
+		"db:seed": "bun --env-file=../env/.env src/seed.ts",
 		"test": "bun --env-file=../env/.env test"
 	},
 	"dependencies": {
