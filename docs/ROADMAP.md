@@ -47,12 +47,25 @@ A phased, vertical-slice plan for building wlog. Free-tier MVP ships first; Pro 
 - [x] `GET /digests?date=...&type=eod` API
 - [ ] Manual e2e: signup → connect → scope → pull → digest passes
 
-## Phase 2 — Free-tier web dashboard
+## Phase 2 — CLI (`apps/tui`)
+**Goal:** Power users can drive the full flow from the terminal.
+
+- [ ] `wlog login` — device-code flow (CLI polls server; user approves in browser via Google OAuth)
+- [ ] Token stored in `~/.config/wlog/config.json`; Eden Treaty client injects `Authorization: Bearer`
+- [ ] `wlog status` — GitHub connection status + last Pull
+- [ ] `wlog sync` — trigger manual Pull, poll until complete
+- [ ] `wlog today` — print today's Standup
+- [ ] `wlog eod` — print today's EOD; `--export` saves `eod-YYYY-MM-DD.md`
+- [ ] `wlog repos list` — list repos with scope indicators
+- [ ] `wlog repos add <name>` / `wlog repos remove <name>` — manage GitHub Scope
+- [ ] `bun build --compile` → `wlog` binary
+
+## Phase 3 — Free-tier web dashboard
 **Goal:** Free users can do the whole flow in a browser.
 
-- [ ] **Decide web framework: TanStack Start vs React Router** (NOT Next.js)
-- [ ] `packages/web` scaffolded; deploys to Vercel
-- [ ] Signup + login screens via Better Auth
+- [ ] **Web framework: TanStack Start** (SPA mode, pure static deploy)
+- [ ] `apps/web` deploys to Vercel as static site
+- [ ] Signup + login screens via Better Auth (@efferd/auth-3 block)
 - [ ] Onboarding flow: connect GitHub → repo picker → first manual pull
 - [ ] Dashboard home: today's Standup + EOD
 - [ ] Timeline view: last 7 days of Digests (Free history cap)
@@ -60,7 +73,7 @@ A phased, vertical-slice plan for building wlog. Free-tier MVP ships first; Pro 
 - [ ] Settings page: pull time picker, Connection status, Scope editing
 - [ ] Empty / loading / error states; toasts
 
-## Phase 3 — Scheduled pulls + email delivery
+## Phase 4 — Scheduled pulls + email delivery
 **Goal:** A user can sign up, walk away, and get their EOD in their inbox daily.
 
 - [ ] Trigger.dev `scheduled-pull-{userId}` task (deterministic name per ADR 0006)
@@ -72,7 +85,7 @@ A phased, vertical-slice plan for building wlog. Free-tier MVP ships first; Pro 
 - [ ] Post-pull hook: send EOD email if enabled
 - [ ] Email preferences in settings (on/off, address override)
 
-## Phase 4 — Free-tier launch readiness
+## Phase 5 — Free-tier launch readiness
 **Goal:** Ship to real users.
 
 - [ ] 7-day history cap enforced in all Digest queries
@@ -88,19 +101,17 @@ A phased, vertical-slice plan for building wlog. Free-tier MVP ships first; Pro 
 
 — 🚀 **Free-only MVP ships here** —
 
-## Phase 5 — Billing + plan gating
+## Phase 6 — Billing + plan gating
 **Goal:** Pro tier becomes purchasable; Free vs Pro enforced everywhere.
 
-- [ ] Stripe products: Pro monthly + annual
-- [ ] Checkout flow from dashboard
+- [ ] Polar checkout flow from dashboard (init done in Phase 1)
 - [ ] Webhook handler: subscription created/updated/canceled → mutate `User.plan`
-- [ ] Stripe Customer Portal link for self-serve management
-- [ ] Plan-gating: `requirePro()` Elysia route guard
+- [ ] `requirePro()` Elysia route guard
 - [ ] Audit every route + Trigger.dev task; mark Free or Pro
 - [ ] Upgrade nudges in dashboard for gated features
 - [ ] Plan downgrade behavior: keep history, block Pro-only re-pulls
 
-## Phase 6 — Pro features
+## Phase 7 — Pro features
 **Goal:** Pro tier feels worth paying for.
 
 - [ ] Linear OAuth Connection flow + Linear project Scope picker
@@ -111,23 +122,9 @@ A phased, vertical-slice plan for building wlog. Free-tier MVP ships first; Pro 
 - [ ] Regenerate-with-instructions: endpoint + UI (uses stored ActivitySummary)
 - [ ] Surface `original / edited / regenerated` state honestly in UI
 - [ ] Brag Doc email delivery (Pro only)
-
-## Phase 7 — CLI + Homebrew
-**Goal:** Pro power users get a terminal client.
-
-- [ ] `packages/cli` with Bun entrypoint
-- [ ] `wlog login`: device-flow auth → token stored in macOS keychain (e.g. `@napi-rs/keyring`)
-- [ ] Eden Treaty client wired with auth header injection
-- [ ] `wlog status` — Connections + last Pull
-- [ ] `wlog sync` — triggers Manual Pull
-- [ ] `wlog today` — print Standup
-- [ ] `wlog eod` — print EOD; `--export` saves `eod-YYYY-MM-DD.md`
-- [ ] `wlog brag --since 30d [--export]`
-- [ ] `wlog history` + `--date` + `--type`
-- [ ] `wlog repos` (list/add/remove) — GitHub Scope mgmt
+- [ ] `wlog brag --since 30d [--export]` (extends Phase 2 CLI)
 - [ ] `wlog projects` (list/add/remove) — Linear Scope mgmt
-- [ ] All CLI endpoints behind `requirePro()` server-side
-- [ ] `bun build --compile` → `wlog-macos-arm64` + `wlog-macos-x64`
+- [ ] Homebrew release: `bun build --compile` → `wlog-macos-arm64` + `wlog-macos-x64`
 - [ ] Release workflow: tag → cross-compile → attach binaries → update `homebrew-wlog` formula SHA256
 - [ ] `homebrew-wlog` tap repo created with formula
 - [ ] Install docs: `brew tap …/wlog && brew install wlog`
@@ -151,6 +148,6 @@ These surfaced during planning and need ADRs (or amendments) before the phase th
 - ~~**ADR 0008 — Connection Scope.**~~ Written and accepted.
 - ~~**ADR 0009 — LLM provider.**~~ Written and accepted (Google Gemini 2.5-flash, Vercel AI SDK).
 - **ADR 0003 amendment.** Add `wlog repos` and `wlog projects` commands to the CLI surface. Needed before Phase 7.
-- **Web framework pick** (TanStack Start vs React Router) — decide at start of Phase 2; ADR optional.
-- **Email provider** (Resend vs Postmark vs Loops) — decide at start of Phase 3.
-- **Error tracking tool** — decide at start of Phase 4.
+- ~~**Web framework pick.**~~ Settled: TanStack Start, SPA mode. Decide at start of Phase 3.
+- **Email provider** (Resend vs Postmark vs Loops) — decide at start of Phase 4.
+- **Error tracking tool** — decide at start of Phase 5.

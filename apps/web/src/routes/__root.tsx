@@ -1,59 +1,60 @@
-import {
-	createRootRouteWithContext,
-	HeadContent,
-	Outlet,
-} from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { Toaster } from "@wlog/ui/components/sonner";
+import { TanStackDevtools } from "@tanstack/react-devtools";
+import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import Header from "@/components/header";
-import { ThemeProvider } from "@/components/theme-provider";
+import appCss from "../styles.css?url";
 
-import "../index.css";
-import type { env } from "@wlog/env";
-
-export type RouterAppContext = {
-	env: typeof env;
-};
-
-export const Route = createRootRouteWithContext<RouterAppContext>()({
-	component: RootComponent,
+export const Route = createRootRoute({
 	head: () => ({
 		meta: [
 			{
-				title: "wlog",
+				charSet: "utf-8",
 			},
 			{
-				name: "description",
-				content: "wlog is a web application",
+				name: "viewport",
+				content: "width=device-width, initial-scale=1",
+			},
+			{
+				title: "TanStack Start Starter",
 			},
 		],
 		links: [
 			{
-				rel: "icon",
-				href: "/favicon.ico",
+				rel: "stylesheet",
+				href: appCss,
 			},
 		],
 	}),
+	notFoundComponent: () => (
+		<main className="container mx-auto p-4 pt-16">
+			<h1>404</h1>
+			<p>The requested page could not be found.</p>
+		</main>
+	),
+	shellComponent: RootDocument,
 });
 
-function RootComponent() {
+function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<>
-			<HeadContent />
-			<ThemeProvider
-				attribute="class"
-				defaultTheme="dark"
-				disableTransitionOnChange
-				storageKey="vite-ui-theme"
-			>
-				<div className="grid h-svh grid-rows-[auto_1fr]">
-					<Header />
-					<Outlet />
-				</div>
-				<Toaster richColors />
-			</ThemeProvider>
-			<TanStackRouterDevtools position="bottom-left" />
-		</>
+		<html lang="en">
+			<head>
+				<HeadContent />
+			</head>
+			<body>
+				{children}
+				<TanStackDevtools
+					config={{
+						position: "bottom-right",
+					}}
+					plugins={[
+						{
+							name: "Tanstack Router",
+							render: <TanStackRouterDevtoolsPanel />,
+						},
+					]}
+				/>
+				<Scripts />
+			</body>
+		</html>
 	);
 }

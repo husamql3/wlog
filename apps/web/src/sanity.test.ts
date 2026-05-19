@@ -1,5 +1,5 @@
-import { expect, it } from "bun:test";
+import { expect, test } from "vitest";
 
-it("test runner is wired", () => {
+test("test runner is wired", () => {
 	expect(true).toBe(true);
 });

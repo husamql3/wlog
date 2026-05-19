@@ -132,6 +132,22 @@ export const githubRoutes = new Elysia({ prefix: "/api/integrations/github" })
 			pushedAt: r.pushed_at,
 		}));
 	})
+	// List currently scoped repos for this connection
+	.get("/scope", async ({ user }) => {
+		if (!user) return status(401, "Unauthorized");
+
+		const connection = await db.connection.findUnique({
+			where: { userId_provider: { userId: user.id, provider: "GITHUB" } },
+			include: { scopes: true },
+		});
+
+		if (!connection) return status(404, "GitHub not connected");
+
+		return connection.scopes.map((s) => ({
+			id: s.externalId,
+			fullName: s.repoFullName,
+		}));
+	})
 	// Atomically replace the user's repo scope for this connection
 	.post(
 		"/scope",

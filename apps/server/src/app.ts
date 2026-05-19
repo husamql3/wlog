@@ -2,6 +2,7 @@ import { cors } from "@elysiajs/cors";
 import { auth } from "@wlog/auth";
 import { env } from "@wlog/env";
 import { Elysia } from "elysia";
+import { cliAuthRoutes } from "./routes/cli-auth";
 import { digestRoutes } from "./routes/digests";
 import { githubRoutes } from "./routes/integrations/github";
 import { pullRoutes } from "./routes/pulls";
@@ -16,6 +17,7 @@ export const app = new Elysia()
 		}),
 	)
 	.mount(auth.handler)
+	.use(cliAuthRoutes)
 	.use(githubRoutes)
 	.use(pullRoutes)
 	.use(digestRoutes)

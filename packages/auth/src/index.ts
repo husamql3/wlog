@@ -4,7 +4,7 @@ import { db } from "@wlog/db";
 import { env } from "@wlog/env";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { magicLink } from "better-auth/plugins";
+import { bearer, magicLink } from "better-auth/plugins";
 
 const polarClient = new Polar({
 	accessToken: env.POLAR_ACCESS_TOKEN,
@@ -29,6 +29,7 @@ export const auth = betterAuth({
 		},
 	},
 	plugins: [
+		bearer(),
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
 				// TODO Phase 3: replace with chosen email provider (Resend/Postmark)
